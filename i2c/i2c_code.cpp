@@ -43,11 +43,11 @@ int main()
 	for(;;)
 	{
 
-		R = wiringPiI2CReadReg16(fd, R_LOW)&0xFF;// + wiringPiI2CReadReg8(fd, R_LOW) << 8;
-		G = wiringPiI2CReadReg16(fd, G_LOW)&0xFF;// + wiringPiI2CReadReg8(fd, G_LOW) << 8;
-		B = wiringPiI2CReadReg16(fd, B_LOW)&0xFF;// + wiringPiI2CReadReg8(fd, B_LOW) << 8;
+		R = wiringPiI2CReadReg16(fd, R_LOW)&0xFF + wiringPiI2CReadReg8(fd, R_HIGH) << 8;
+		G = wiringPiI2CReadReg16(fd, G_LOW)&0xFF + wiringPiI2CReadReg8(fd, G_HIGH) << 8;
+		B = wiringPiI2CReadReg16(fd, B_LOW)&0xFF + wiringPiI2CReadReg8(fd, B_HIGH) << 8;
 
-		printf("R=%02x   G=%d   B=%d\r\n", R, G, B);  
+		printf("R=%d   G=%d   B=%d\r\n", R, G, B);  
 	}
 	
 }
