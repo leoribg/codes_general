@@ -1,0 +1,43 @@
+/*CONF.TXT*/
+sudo nano /boot/config.txt
+
+#Enable UART
+enable_uart=1
+
+#I2C
+dtparam=i2c1=on
+dtparam=i2c_arm=on
+/*END OF CONF.TXT*/
+
+/*NETWORK*/
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+network={
+    ssid="testing"
+    psk="testingPassword"
+}
+sudo iwlist wlan0 scan
+ifconfig wlan0
+/*END OF NETWORK*/
+
+/*I2C*/
+sudo apt-get install -y i2c-tools
+
+sudo raspi-config
+
+git clone git://git.drogon.net/wiringPi
+cd wiringPi
+./build
+
+i2cdetect -y 1
+sudo i2cdump -y 1 0x29
+
+
+sudo i2cset -y 1 0x29 0x80 0x1B // Enable Register 0x00|0x80
+sudo i2cset -y 1 0x29 0x81 0xF6 // RGBC Timing Register 0x01|0x80
+sudo i2cset -y 1 0x29 0x8F 0x01 // Control Register 0x0F|0x80
+
+
+sudo i2cget -y 1 0x29 0x98 // GDATAL GREEN LOW 0x18|0x80
+sudo i2cget -y 1 0x29 0x99 // GDATAH GREEN HIGH 0x19|0x80
+/*END OF I2C*/
+
