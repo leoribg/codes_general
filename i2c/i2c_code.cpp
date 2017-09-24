@@ -3,6 +3,7 @@
 #include <string.h>
 #include <iostream>
 #include <errno.h>
+#include <wiringPi.h>
 #include <wiringPiI2C.h>
 
 #define I2C_ADDRESS			0x29
@@ -24,6 +25,7 @@ int main()
 	int data;
 	int fd;
 	uint16_t R, G, B;
+	int now_time = 0, last_time = 0;
 
 	fd = wiringPiI2CSetup(I2C_ADDRESS);
 	if (fd == -1)
@@ -40,18 +42,24 @@ int main()
 	wiringPiI2CWriteReg8(fd, RGBC_REG, 0x00);
 	wiringPiI2CWriteReg8(fd, CONTROL_REG, 0x01);
 
+
 	for(;;)
 	{
+		now_time = millis();
+		
+		if((now_time-last_time) > 2000)
+		{
+			last_time = millis();
 
-		R =  wiringPiI2CReadReg8(fd, R_LOW)&0xFF;
-		R += wiringPiI2CReadReg8(fd, R_HIGH) << 8;
-		G =  wiringPiI2CReadReg8(fd, G_LOW)&0xFF;
-		G += wiringPiI2CReadReg8(fd, G_HIGH) << 8;
-		B =  wiringPiI2CReadReg8(fd, B_LOW)&0xFF; 
-		B += wiringPiI2CReadReg8(fd, B_HIGH) << 8;
+			R =  wiringPiI2CReadReg8(fd, R_LOW)&0xFF;
+			R += wiringPiI2CReadReg8(fd, R_HIGH) << 8;
+			G =  wiringPiI2CReadReg8(fd, G_LOW)&0xFF;
+			G += wiringPiI2CReadReg8(fd, G_HIGH) << 8;
+			B =  wiringPiI2CReadReg8(fd, B_LOW)&0xFF; 
+			B += wiringPiI2CReadReg8(fd, B_HIGH) << 8;
 
-		printf("R=%d   G=%d   B=%d\r\n", R, G, B);
-		break;  
+			printf("R=%d   G=%d   B=%d\r\n", R, G, B);
+		} 
 	}
 	
 }
